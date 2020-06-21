@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        caption="msg://caption"
+        messagesPack="com.company.recruit.web.screens">
+    <data>
+        <keyValueCollection id="candidateCollection">
+            <loader id="candidateCollectionLoader">
+            </loader>
+        </keyValueCollection>
+    </data>
+    <layout spacing="true" expand="spacer">
+        <popupView id="saveCandidatePopup" hideOnMouseOut="false" align="BOTTOM_RIGHT">
+            <vbox spacing="true" height="300px" width="550px" expand="saveCandidateList">
+                <label value="msg://lblCreateCandidate"/>
+                <hbox height="30px" spacing="true">
+                    <textField id="txtFullName" inputPrompt="msg://txtCodeCandidate"/>
+                    <button id="btnCreateCandidate" caption="Сохранить"/>
+                </hbox>
+                <label value="msg://lblReplaceCandidate"/>
+                <table id="saveCandidateList" height="100%" width="100%" dataContainer="candidateCollection"
+                       showSelection="false" sortable="false" settingsEnabled="false"
+                       columnControlVisible="false" contextMenuEnabled="false" reorderingAllowed="false">
+                    <columns>
+                        <column id="columnReplace" caption="" width="120"/>
+                        <column id="columnFullName" caption="msg://codeCandidateColumn" width="255"/>
+                        <column id="columnDefault" caption="msg://defaultCandidateColumn" width="140"/>
+                    </columns>
+                </table>
+            </vbox>
+        </popupView>
+        <popupView id="restoreCandidatePopup" hideOnMouseOut="false" align="BOTTOM_RIGHT">
+            <vbox spacing="true" height="300px" width="550px" expand="restoreCandidateList">
+                <label value="msg://lblRestoreCandidateFrom"/>
+                <table id="restoreCandidateList" height="100%" width="100%" dataContainer="candidateCollection"
+                       showSelection="false" sortable="false" settingsEnabled="false"
+                       columnControlVisible="false" contextMenuEnabled="false" reorderingAllowed="false">
+                    <columns>
+                        <column id="columnSelect" caption="" width="140"/>
+                        <column id="columnFullName" caption="msg://codeCandidateColumn" width="385"/>
+                    </columns>
+                </table>
+            </vbox>
+        </popupView>
+        <buttonsPanel>
+            <popupButton id="valuesActions" caption="&#1044;&#1077;&#1081;&#1089;&#1090;&#1074;&#1080;&#1103;" icon="EDIT">
+                <actions>
+                    <action id="saveValues" caption="msg://saveValues" icon="SAVE"/>
+                    <action id="restoreValues" caption="msg://restoreValues" icon="REPLY"/>
+                    <action id="clearValues" caption="msg://clearValues" icon="RECYCLE"/>
+                    <action id="defaultValues" caption="msg://defaultValues" icon="DROPBOX"/>
+                </actions>
+            </popupButton>
+        </buttonsPanel>
+        <form id="valuesForm" height="200px" align="TOP_LEFT" width="auto">
+            <column>
+                <textField id="txtLastName" caption="msg://lastNameField">
+                    <validators>
+                        <notBlank message="msg://error.lastName.blank"/>
+                    </validators>
+                </textField>
+                <textField id="txtMiddleName" caption="msg://middleNameField">
+                    <validators>
+                        <notBlank message="msg://error.middleName.blank"/>
+                    </validators>
+                </textField>
+                <textField id="txtEmail" caption="msg://emailField">
+                    <validators>
+                        <notBlank message="msg://error.email.blank"/>
+                    </validators>
+                </textField>
+            </column>
+            <column>
+                <textField id="txtFirstName" caption="msg://firstNameField">
+                    <validators>
+                        <notBlank message="msg://error.firstName.blank"/>
+                    </validators>
+                </textField>
+                <textField visible="false"/>
+                <textField id="txtAge" caption="msg://ageField" datatype="int">
+                    <validators>
+                        <positive message="msg://error.age.digit.error"/>
+                        <notEmpty message="msg://error.age.empty.error"/>
+                    </validators>
+                </textField>
+            </column>
+        </form>
+        <label id="spacer"/>
+    </layout>
+</window>

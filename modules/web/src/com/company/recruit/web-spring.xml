@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:gui="http://schemas.haulmont.com/cuba/spring/cuba-gui.xsd">
+
+    <!-- Annotation-based beans -->
+    <context:component-scan base-package="com.company.recruit"/>
+    
+    <gui:screens base-packages="com.company.recruit.web"/>
+    <bean id="cubarecruit_proxyCreator" class="com.haulmont.cuba.web.sys.remoting.WebRemoteProxyBeanCreator">
+        <property name="serverSelector" ref="cuba_ServerSelector"/>
+        <property name="remoteServices">
+            <map>
+                <entry key="cubarecruit_CandidateRepositoryService"
+                       value="com.company.recruit.service.CandidateRepositoryService"/>
+                <entry key="cubarecruit_CandidateService" value="com.company.recruit.service.CandidateService"/>
+                <entry key="cubarecruit_CandidateToFullNameService"
+                       value="com.company.recruit.service.mapper.MapperService"/>
+            </map>
+        </property>
+    </bean>
+
+</beans>

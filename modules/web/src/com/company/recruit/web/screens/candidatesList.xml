@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fragment xmlns="http://schemas.haulmont.com/cuba/screen/fragment.xsd">
+    <data>
+        <keyValueCollection id="candidateCollection">
+            <loader id="candidateCollectionLoader">
+            </loader>
+        </keyValueCollection>
+    </data>
+    <layout>
+        <popupView id="candidateSelectionView" hideOnMouseOut="false" align="MIDDLE_CENTER">
+            <vbox spacing="true" height="300px" width="500px">
+                <table id="name" height="100%" width="100%" dataContainer="candidateCollection">
+                    <columns>
+                        <column id="firstName" width="100"/>
+                        <column id="middleName" width="100"/>
+                        <column id="lastName" width="100"/>
+                    </columns>
+                </table>
+            </vbox>
+        </popupView>
+    </layout>
+</fragment>
