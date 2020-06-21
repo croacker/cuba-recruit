@@ -10,7 +10,7 @@
     </data>
     <layout spacing="true" expand="spacer">
         <popupView id="saveCandidatePopup" hideOnMouseOut="false" align="BOTTOM_RIGHT">
-            <vbox spacing="true" height="300px" width="550px" expand="saveCandidateList">
+            <vbox spacing="true" height="400px" width="550px" expand="saveCandidateList">
                 <label value="msg://saveCandidate.lblCreate"/>
                 <hbox height="30px" spacing="true">
                     <textField id="txtFullName" inputPrompt="msg://saveCandidate.txtFullName"/>
@@ -51,39 +51,6 @@
                 </actions>
             </popupButton>
         </buttonsPanel>
-        <form id="valuesForm" height="200px" align="TOP_LEFT" width="auto">
-            <column>
-                <textField id="txtLastName" caption="msg://form.lastName">
-                    <validators>
-                        <notBlank message="msg://error.lastName.blank"/>
-                    </validators>
-                </textField>
-                <textField id="txtMiddleName" caption="msg://form.middleName">
-                    <validators>
-                        <notBlank message="msg://error.middleName.blank"/>
-                    </validators>
-                </textField>
-                <textField id="txtEmail" caption="msg://form.email">
-                    <validators>
-                        <notBlank message="msg://error.email.blank"/>
-                    </validators>
-                </textField>
-            </column>
-            <column>
-                <textField id="txtFirstName" caption="msg://form.firstName">
-                    <validators>
-                        <notBlank message="msg://error.firstName.blank"/>
-                    </validators>
-                </textField>
-                <textField visible="false"/>
-                <textField id="txtAge" caption="msg://form.age" datatype="int">
-                    <validators>
-                        <positive message="msg://error.age.digit.error"/>
-                        <notEmpty message="msg://error.age.empty.error"/>
-                    </validators>
-                </textField>
-            </column>
-        </form>
         <fragment id="candidateAttributes" screen="cubarecruit_CandidateAttributesFragment"/>
         <label id="spacer"/>
     </layout>
