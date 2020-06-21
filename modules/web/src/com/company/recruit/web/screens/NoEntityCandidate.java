@@ -12,56 +12,76 @@ import com.haulmont.cuba.gui.screen.*;
 import org.springframework.util.StringUtils;
 
 import javax.inject.Inject;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Окно регистрации кандидата
+ * TODO вынести popup'ы в отдельные классы
+ */
 @UiController("cubarecruit_NoEntityCandidate")
 @UiDescriptor("NoEntityCandidate.xml")
 public class NoEntityCandidate extends Screen {
 
-    public static final String CR_LF = "\r\n";
-
+    /**
+     * Сообщения
+     */
     @Inject
     protected Messages messages;
 
+    /**
+     * Диалог сохранения кандидата
+     */
     @Inject
     private PopupView saveCandidatePopup;
 
+    /**
+     * Диалог восстановления кандидата
+     */
     @Inject
     private PopupView restoreCandidatePopup;
 
+    /**
+     * Сервис работы с хранимыми сущностями
+     */
     @Inject
     private CandidateService candidateService;
-    @Inject
-    MapperService mapperService;
 
+    /**
+     * Коллекция для привязки данных к таблицам
+     */
     @Inject
     private KeyValueCollectionContainer candidateCollection;
 
+    /**
+     * Фабрика компонентов
+     */
     @Inject
     private UiComponents uiComponents;
 
+    /**
+     * Уведомления
+     */
     @Inject
     private Notifications notifications;
 
+    /**
+     * Наименование кандидата
+     */
     @Inject
     private TextField<String> txtFullName;
 
+    /**
+     * Фрагмент с атрибутами кандидата
+     */
     @Inject
-    private TextField<String> txtLastName;
-    @Inject
-    private TextField<String> txtMiddleName;
-    @Inject
-    private TextField<String> txtEmail;
-    @Inject
-    private TextField<String> txtFirstName;
-    @Inject
-    private TextField<Integer> txtAge;
+    private CandidateAttributesFragment candidateAttributes;
 
     @Subscribe
     private void onInit(InitEvent event) {
         System.out.println("On init");
-        reloadData();
+        refresh();
         prepareControls();
     }
 
@@ -96,11 +116,7 @@ public class NoEntityCandidate extends Screen {
         Button component = uiComponents.create(Button.NAME);
         component.setCaption(caption);
         component.addClickListener(e -> {
-            candidateService.replace(candidate.getId(), getNewCandidate());
-            hideSavePopup();
-            clearValues();
-            reloadData();
-            showInfo("Кандидат заменен");
+            replace(candidate);
         });
         return component;
     }
@@ -125,20 +141,20 @@ public class NoEntityCandidate extends Screen {
     }
 
     @Install(to = "restoreCandidateList.columnSelect", subject = "columnGenerator")
-    private Component selectCandidateSelectColumnGenerator(InmemoryCandidate candidate) {
+    private Component restoreCandidateSelectColumnGenerator(InmemoryCandidate candidate) {
         String caption = getMessage("restoreCandidate.columns.btnRestore");
         Button component = uiComponents.create(Button.NAME);
         component.setCaption(caption);
         component.addClickListener(e -> {
             restoreValues(candidate);
-            hideRestorePopup();
+            hidePopups();
             showInfo("Значения восстановлены");
         });
         return component;
     }
 
     @Install(to = "restoreCandidateList.columnFullName", subject = "columnGenerator")
-    private Component nameNameColumnGenerator(InmemoryCandidate candidate) {
+    private Component restoreCandidateFullNameColumnGenerator(InmemoryCandidate candidate) {
         Label component = uiComponents.create(Label.NAME);
         component.setValue(candidate.getFullName());
         return component;
@@ -155,125 +171,127 @@ public class NoEntityCandidate extends Screen {
     }
 
     /**
-     *
+     * Открыть диалог сохранения кандидата
      */
     private void showSavePopup() {
-        if (validate()) {
+        getNewCandidate().ifPresent(candidate -> {
             reloadData();
-            InmemoryCandidate candidate = getNewCandidate();
             txtFullName.setValue(candidate.getFullName());
             saveCandidatePopup.setPopupVisible(true);
-        }
+        });
     }
 
-    private void hideSavePopup() {
-        saveCandidatePopup.setPopupVisible(false);
-    }
-
+    /**
+     * Открыть диалог выбора кандидата для восстановления значений
+     */
     private void showRestorePopup(){
         reloadData();
         restoreCandidatePopup.setPopupVisible(true);
     }
 
-    private void hideRestorePopup() {
+    /**
+     * Скрыть диалоги
+     */
+    private void hidePopups() {
+        saveCandidatePopup.setPopupVisible(false);
         restoreCandidatePopup.setPopupVisible(false);
     }
 
     /**
-     *
+     * Сохранить кандидата
      */
     private void saveCandidate(){
-        InmemoryCandidate candidate = getNewCandidate();
-        candidateService.save(candidate);
-        hideSavePopup();
-        clearValues();
-        reloadData();
-        showInfo("Кандидат сохранен");
-    }
-
-    private void restoreValues(InmemoryCandidate candidate) {
-        txtFirstName.setValue(candidate.getFirstName());
-        txtMiddleName.setValue(candidate.getMiddleName());
-        txtLastName.setValue(candidate.getLastName());
-        txtEmail.setValue(candidate.getEmail());
-        txtAge.setValue(candidate.getAge());
-    }
-
-    private void clearValues() {
-        txtFirstName.setValue("");
-        txtMiddleName.setValue("");
-        txtLastName.setValue("");
-        txtEmail.setValue("");
-        txtAge.setValue(0);
-    }
-
-    private void restoreFromDefault(){
-         InmemoryCandidate candidate = candidateService.getDefault();
-         if (candidate != null){
-             txtFirstName.setValue(candidate.getFirstName());
-             txtMiddleName.setValue(candidate.getMiddleName());
-             txtLastName.setValue(candidate.getLastName());
-             txtEmail.setValue(candidate.getEmail());
-             txtAge.setValue(candidate.getAge());
-             showInfo("Восстановлены значения по-умолчанию");
-         }else {
-             showError("Нет кандидата по-умолчанию");
-         }
-    }
-
-    // TODO возраст не берется
-    private InmemoryCandidate getNewCandidate() {
-        InmemoryCandidate candidate = new InmemoryCandidate("",
-                txtFirstName.getValue(),
-                txtMiddleName.getValue(),
-                txtLastName.getValue(),
-                txtEmail.getValue(),
-                txtAge.getValue(),
-                false);
-        String fullName = mapperService.toFullName(candidate);
-        candidate.setFullName(fullName);
-        return candidate;
-    }
-
-    private void showInfo(String description){
-        String caption = getMessage("notification.caption");
-        notifications.create().withType(Notifications.NotificationType.TRAY)
-                .withCaption(caption).withDescription(description).show();
-    }
-
-    private void showError(String description){
-        String caption = getMessage("error.caption");
-        notifications.create().withType(Notifications.NotificationType.ERROR)
-                .withCaption(caption).withDescription(description).show();
+        candidateAttributes.getCandidate().ifPresent(candidate -> {
+            candidateService.save(candidate);
+            refresh();
+            showInfo("Кандидат сохранен");
+        });
     }
 
     /**
-     *
-     * @return
+     * Заменить кандидата
+     * @param candidate кандидат к-й будет заменен
      */
-    private boolean validate() {
-        boolean result = true;
-        String error = Stream.of(txtLastName, txtFirstName, txtMiddleName, txtEmail, txtAge)
-                .map(this::tryValidate)
-                .filter(err -> err != null)
-                .collect(Collectors.joining(CR_LF));
-        if(!StringUtils.isEmpty(error)){
-            showError(error);
-            result = false;
-        }
-        return result;
+    private void replace(InmemoryCandidate candidate) {
+        getNewCandidate().ifPresent(newCandidate -> {
+            candidateService.replace(candidate.getId(), newCandidate);
+            refresh();
+            showInfo("Кандидат заменен");
+        });
     }
 
-    private String tryValidate(Validatable validatable){
-        String result = null;
-        try {
-            validatable.validate();
-        } catch (ValidationException e) {
-            result = e.getMessage();
-        }
-        return result;
+    /**
+     * Восстановить значения
+     * @param candidate кандидат источник
+     */
+    private void restoreValues(InmemoryCandidate candidate) {
+        candidateAttributes.restore(candidate);
     }
 
+    /**
+     * Очистить значения
+     */
+    private void clearValues() {
+        candidateAttributes.clearValues();
+    }
+
+    /**
+     * Восстановить из кандидата по-умолчанию
+     */
+    private void restoreFromDefault() {
+        InmemoryCandidate candidate = candidateService.getDefault();
+        if (candidate != null) {
+            candidateAttributes.restore(candidate);
+            showInfo("Восстановлены значения по-умолчанию");
+        } else {
+            showError("Нет кандидата по-умолчанию");
+        }
+    }
+
+    /**
+     * Получить нового кандидата
+     * @return новый кандидат
+     */
+    private Optional<InmemoryCandidate> getNewCandidate() {
+        return candidateAttributes.getCandidate();
+    }
+
+    /**
+     * Информационное сообщение
+     * TODO централизованное информационное сообщение
+     * @param info текст сообщения
+     */
+    private void showInfo(String info){
+        String caption = getMessage("notification.caption");
+        notifications.create().withType(Notifications.NotificationType.TRAY)
+                .withCaption(caption).withDescription(info).show();
+    }
+
+    /**
+     * Обновить форму
+     */
+    private void refresh(){
+        hidePopups();
+        clearValues();
+        reloadData();
+    }
+
+    /**
+     * Сообщение об ошибке
+     * TODO централизованное сообщение об ошибках
+     * @param error текст ошибки
+     */
+    private void showError(String error){
+        String caption = getMessage("error.caption");
+        notifications.create().withType(Notifications.NotificationType.ERROR)
+                .withCaption(caption).withDescription(error).show();
+    }
+
+    /**
+     * Локализация для указанного ключа
+     * @param key ключ
+     * @return строка локализации
+     */
     private String getMessage(String key){
         return messages.getMessage(getClass(), key);
     }

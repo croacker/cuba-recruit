@@ -84,6 +84,7 @@
                 </textField>
             </column>
         </form>
+        <fragment id="candidateAttributes" screen="cubarecruit_CandidateAttributesFragment"/>
         <label id="spacer"/>
     </layout>
 </window>

@@ -6,54 +6,77 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.*;
 
+/**
+ * Сервис хранилище
+ */
 @Service(CandidateRepositoryService.NAME)
 public class CandidateRepositoryServiceBean implements CandidateRepositoryService {
 
     private List<InmemoryCandidate> candidates;
 
+    /**
+     * Найти по идентификатору
+     * @param id идентификатор
+     * @return хранимая сущность
+     */
     @Override
-    public InmemoryCandidate findById(Object uuid) {
-        return candidates.stream().filter(candidate -> candidate.getId().equals(uuid)).findFirst().orElse(null);
+    public InmemoryCandidate findById(Object id) {
+        return candidates.stream().filter(candidate -> candidate.getId().equals(id)).findFirst().orElse(null);
     }
 
+    /**
+     * Получить все хранимые сущности
+     * @return хранимые сущности
+     */
     @Override
     public List<InmemoryCandidate> findAll() {
         return candidates;
     }
 
-    @Override
-    public void setDefaultCandidate(InmemoryCandidate defaultCandidate) {
-        candidates.forEach(candidate -> {
-            if (candidate.equals(defaultCandidate)) {
-                candidate.setDefault(true);
-            } else {
-                candidate.setDefault(false);
-            }
-        });
-    }
+//    @Override
+//    public void setDefaultCandidate(InmemoryCandidate defaultCandidate) {
+//        candidates.forEach(candidate -> {
+//            if (candidate.equals(defaultCandidate)) {
+//                candidate.setDefault(true);
+//            } else {
+//                candidate.setDefault(false);
+//            }
+//        });
+//    }
 
-    public InmemoryCandidate getDefaultCandidate() {
-        return candidates.stream().filter(InmemoryCandidate::isDefault).findFirst().orElse(null);
-    }
+//    public InmemoryCandidate getDefaultCandidate() {
+//        return candidates.stream().filter(InmemoryCandidate::isDefault).findFirst().orElse(null);
+//    }
 
+    /**
+     * Добавить сущность в хранилище
+     * @param candidate хранимая сущность
+     */
     @Override
     public void add(InmemoryCandidate candidate) {
         candidates.add(candidate);
     }
 
     //TODO подмать как лучше заменить
-    @Override
-    public void replace(InmemoryCandidate candidate, InmemoryCandidate newCandidate) {
-        int idx = candidates.indexOf(candidate);
-        candidates.remove(idx);
-        candidates.add(idx, newCandidate);
-    }
+//    @Override
+//    public void replace(InmemoryCandidate candidate, InmemoryCandidate newCandidate) {
+//        int idx = candidates.indexOf(candidate);
+//        candidates.remove(idx);
+//        candidates.add(idx, newCandidate);
+//    }
 
+    /**
+     * Сущность по-умолчанию
+     * @return сущность по-умолчанию
+     */
     @Override
     public InmemoryCandidate getDefault() {
         return candidates.stream().filter(candidate -> candidate.isDefault()).findFirst().orElse(null);
     }
 
+    /**
+     * Начальное заполнение
+     */
     @PostConstruct
     private void init() {
         candidates = new ArrayList<>();

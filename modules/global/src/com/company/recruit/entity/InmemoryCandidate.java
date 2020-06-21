@@ -13,56 +13,68 @@ public class InmemoryCandidate extends KeyValueEntity {
        return (String) properties.get("fullName");
     }
 
-    public void setFullName(String fullName) {
+    public InmemoryCandidate setFullName(String fullName) {
         properties.put("fullName", fullName.trim());
+        return this;
     }
 
     public String getFirstName() {
         return (String) properties.get("firstName");
     }
 
-    public void setFirstName(String firstName) {
+    public InmemoryCandidate setFirstName(String firstName) {
         properties.put("firstName", firstName.trim());
+        return this;
     }
 
     public String getMiddleName() {
         return (String) properties.get("middleName");
     }
 
-    public void setMiddleName(String middleName) {
+    public InmemoryCandidate setMiddleName(String middleName) {
         properties.put("middleName", middleName.trim());
+        return this;
     }
 
     public String getLastName() {
         return (String) properties.get("lastName");
     }
 
-    public void setLastName(String lastName) {
+    public InmemoryCandidate setLastName(String lastName) {
         properties.put("lastName", lastName.trim());
+        return this;
     }
 
     public String getEmail() {
         return (String) properties.get("email");
     }
 
-    public void setEmail(String email) {
+    public InmemoryCandidate setEmail(String email) {
         properties.put("email", email.trim());
+        return this;
     }
 
     public Integer getAge() {
         return (Integer) properties.get("age");
     }
 
-    public void setAge(Integer age) {
+    public InmemoryCandidate setAge(Integer age) {
         properties.put("age", age);
+        return this;
     }
 
     public Boolean isDefault() {
         return (Boolean) properties.get("default");
     }
 
-    public void setDefault(Boolean defaultCandidate) {
+    public InmemoryCandidate setDefault(Boolean defaultCandidate) {
         properties.put("default", defaultCandidate);
+        return this;
+    }
+
+    public InmemoryCandidate(){
+        setFullName("");
+        setDefault(false);
     }
 
     public InmemoryCandidate(String fullName, String firstName, String middleName, String lastName, String email, Integer age, Boolean defaultCandidate) {
