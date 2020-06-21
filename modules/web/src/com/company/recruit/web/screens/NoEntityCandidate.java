@@ -92,7 +92,7 @@ public class NoEntityCandidate extends Screen {
 
     @Install(to = "saveCandidateList.columnReplace", subject = "columnGenerator")
     private Component saveCandidateReplaceColumnGenerator(InmemoryCandidate candidate) {
-        String caption = getMessage("btnReplaceCandidate");
+        String caption = getMessage("saveCandidate.columns.btnReplace");
         Button component = uiComponents.create(Button.NAME);
         component.setCaption(caption);
         component.addClickListener(e -> {
@@ -126,7 +126,7 @@ public class NoEntityCandidate extends Screen {
 
     @Install(to = "restoreCandidateList.columnSelect", subject = "columnGenerator")
     private Component selectCandidateSelectColumnGenerator(InmemoryCandidate candidate) {
-        String caption = getMessage("btnRestoreCandidate");
+        String caption = getMessage("restoreCandidate.columns.btnRestore");
         Button component = uiComponents.create(Button.NAME);
         component.setCaption(caption);
         component.addClickListener(e -> {
@@ -236,13 +236,13 @@ public class NoEntityCandidate extends Screen {
     }
 
     private void showInfo(String description){
-        String caption = getMessage("notificationInfo");
+        String caption = getMessage("notification.caption");
         notifications.create().withType(Notifications.NotificationType.TRAY)
                 .withCaption(caption).withDescription(description).show();
     }
 
     private void showError(String description){
-        String caption = getMessage("notificationError");
+        String caption = getMessage("error.caption");
         notifications.create().withType(Notifications.NotificationType.ERROR)
                 .withCaption(caption).withDescription(description).show();
     }
